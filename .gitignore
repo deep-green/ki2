@@ -169,3 +169,8 @@ venv.bak/
 .mypy_cache/
 
 venv
+.idea/inspectionProfiles/
+.idea/ki2.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
