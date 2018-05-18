@@ -1,29 +1,37 @@
-from aiohttp import web
 import socketio
+import eventlet
+import eventlet.wsgi
+from flask import Flask, render_template
 
-sio = socketio.AsyncServer()
-app = web.Application()
-sio.attach(app)
+sio = socketio.Server()
+app = Flask(__name__)
 
-async def index(request):
+
+@app.route('/')
+def index():
     """Serve the client-side application."""
-    with open('index.html') as f:
-        return web.Response(text=f.read(), content_type='text/html')
+    return render_template('index.html')
+
 
 @sio.on('connect', namespace='/chat')
 def connect(sid, environ):
     print("connect ", sid)
 
+
 @sio.on('chat message', namespace='/chat')
-async def message(sid, data):
+def message(sid, data):
     print("message ", data)
-    await sio.emit('reply', room=sid)
+    sio.emit('reply', room=sid)
+
 
 @sio.on('disconnect', namespace='/chat')
 def disconnect(sid):
     print('disconnect ', sid)
 
-app.router.add_get('/', index)
 
 if __name__ == '__main__':
-    web.run_app(app)
+    # wrap Flask application with engineio's middleware
+    app = socketio.Middleware(sio, app)
+
+    # deploy as an eventlet WSGI server
+    eventlet.wsgi.server(eventlet.listen(('', 8000)), app)
