@@ -4,4 +4,4 @@ class Evaluator:
         self.fen = fen
 
     def getMove(self):
-        return None
+        return self.fen
