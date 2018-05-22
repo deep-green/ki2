@@ -4,9 +4,7 @@ python:
   - "3.6"
 
 notifications:
-  email:
-    on_succes: never
-    on_failure: always
+  email: false
 
 script:
   - python -m unittest discover -s tests/
