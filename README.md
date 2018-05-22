@@ -1,4 +1,5 @@
 # Künstliche Intelligenz - Gruppe 2
+[![Build Status](https://travis-ci.com/deep-green/ki2.svg?branch=master)](https://travis-ci.com/deep-green/ki2)
 
 ## Schnittstelle
 ### Emit
