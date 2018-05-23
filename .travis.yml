@@ -9,3 +9,14 @@ notifications:
 cache:
   directories:
     - "node_modules"
+
+matrix:
+  include:
+    - language: node_js
+      node_js:
+        - "node"
+
+    - language: rust
+      install: skip
+      script:
+        - cargo test --verbose --all
