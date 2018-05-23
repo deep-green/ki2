@@ -17,8 +17,7 @@ matrix:
         - "node"
 
     - language: rust
-      install: skip
-      before_script:
-        - "cd native/"
+      install:
+        - npm install neon-cli
       script:
-        - cargo test
+        - "neon build"
