@@ -15,8 +15,12 @@ matrix:
     - language: node_js
       node_js:
         - "node"
+      before_script:
+        - "cd lib/"
 
     - language: rust
       install: skip
+      before_script:
+        - "cd native/"
       script:
         - cargo test --verbose --all
