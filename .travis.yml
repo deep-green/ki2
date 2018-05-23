@@ -1,0 +1,10 @@
+language: python
+
+python:
+  - "3.6"
+
+notifications:
+  email: false
+
+script:
+  - python -m unittest discover -s tests/
