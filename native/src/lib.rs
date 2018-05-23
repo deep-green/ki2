@@ -1,3 +1,5 @@
+#![cfg_attr(feature="clippy", feature(plugin))]
+#![cfg_attr(feature="clippy", plugin(clippy))]
 #[macro_use]
 extern crate neon;
 
@@ -15,7 +17,7 @@ impl<'a, T: This> CheckArgument<'a> for FunctionCall<'a, T> {
 }
 
 fn get_move(mut call: Call) -> JsResult<JsString> {
-    let fen = call.check_argument::<JsString>(0)?.value();
+    let fen: String = call.check_argument::<JsString>(0)?.value();
     Ok(JsString::new(call.scope, &fen).unwrap())
 }
 
