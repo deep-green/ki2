@@ -19,6 +19,7 @@
   },
   "scripts": {
     "build": "neon build",
+    "cargo_test": "cd native/ && cargo test",
     "test": "jest"
   },
   "devDependencies": {

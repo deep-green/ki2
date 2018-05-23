@@ -16,3 +16,4 @@ matrix:
         - npm install --global neon-cli
       script:
         - "neon build; cargo test"
+        - npm cargo_test
