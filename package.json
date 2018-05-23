@@ -1,0 +1,18 @@
+{
+  "name": "sw-ki",
+  "version": "0.1.0",
+  "description": "A chess ai that uses a minimax algorithm",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deep-green/ki2"
+  },
+  "author": "reinkepatrick, martistuwe <patrick.reinke@fh-bielefeld.de>",
+  "license": "MIT",
+  "dependencies": {
+    "neon-cli": "^0.1.22"
+  },
+  "scripts": {
+    "install": "neon build"
+  }
+}
