@@ -7,10 +7,15 @@
     "type": "git",
     "url": "https://github.com/deep-green/ki2"
   },
-  "author": "reinkepatrick, martistuwe <patrick.reinke@fh-bielefeld.de>",
+  "authors": [
+    "reinkepatrick <patrick.reinke@fh-bielefeld.de>",
+    "martistuwe"
+  ],
   "license": "MIT",
   "dependencies": {
-    "neon-cli": "^0.1.22"
+    "express": "^4.15.2",
+    "neon-cli": "^0.1.22",
+    "socketio": "^1.0.0"
   },
   "scripts": {
     "install": "neon build"
