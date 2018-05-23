@@ -14,4 +14,3 @@ neon-build = "0.1.22"
 
 [dependencies]
 neon = "0.1.22"
-clippy = "*"

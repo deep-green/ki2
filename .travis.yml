@@ -14,7 +14,5 @@ matrix:
     - language: rust
       install:
         - npm install --global neon-cli
-        - rustup install nightly
-        - cargo +nightly install clippy
       script:
         - "neon build"
