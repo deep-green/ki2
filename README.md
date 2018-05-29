@@ -1,15 +1,8 @@
 # Künstliche Intelligenz - Gruppe 2   [![Build Status](https://travis-ci.com/deep-green/ki2.svg?branch=master)](https://travis-ci.com/deep-green/ki2)
 
 ## Schnittstelle
-### Emit
-| Channel | Namespace | Data |
-|:--------|:----------|:-----|
-| getMove | /         | FEN  |
-
-### Listen
-| Channel | Namespace | Data |
-|:--------|:----------|:-----|
-| getMove | /         | Move |
+__URL:__ ec2-54-93-171-91.eu-central-1.compute.amazonaws.com  
+__Port:__ 5000
 
 ### Beispiel (node.js)
 ```js
