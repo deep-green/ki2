@@ -2,7 +2,7 @@
   "name": "sw-ki",
   "version": "0.1.0",
   "description": "A chess ai that uses a minimax algorithm",
-  "main": "lib/index.js",
+  "main": "lib/app.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/deep-green/ki2"
