@@ -16,7 +16,7 @@ impl<'a, T: This> CheckArgument<'a> for FunctionCall<'a, T> {
 
 fn get_move(mut call: Call) -> JsResult<JsString> {
     let fen: String = call.check_argument::<JsString>(0)?.value();
-    Ok(JsString::new(call.scope, &fen).unwrap())
+    Ok(JsString::new(call.scope, "e2e4").unwrap())
 }
 
 register_module!(m, {
