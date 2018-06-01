@@ -1,5 +1,7 @@
 # Künstliche Intelligenz - Gruppe 2   [![Build Status](https://travis-ci.com/deep-green/ki2.svg?branch=master)](https://travis-ci.com/deep-green/ki2)
 
+[Chess AI Testing-Client](https://github.com/martistuwe/catc)
+
 ## Schnittstelle
 __URL:__ ec2-54-93-171-91.eu-central-1.compute.amazonaws.com  
 __Port:__ 5000
