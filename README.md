@@ -8,7 +8,7 @@ __Port:__ 5000
 ```js
 let socket = require('socket.io-client')('http://ec2-54-93-171-91.eu-central-1.compute.amazonaws.com:5000');
 
-socket.emit('recieve', { FEN: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' });
+socket.emit('receive', { FEN: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' });
 
 socket.on('makeMove', function(msg) {
     console.log(msg);
