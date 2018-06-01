@@ -7,9 +7,8 @@ __Port:__ 5000
 ### Beispiel (node.js)
 ```js
 let socket = require('socket.io-client')('http://ec2-54-93-171-91.eu-central-1.compute.amazonaws.com:5000');
-socket.on('connect', function() {
-    socket.emit('recieve', { FEN: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' });
-});
+
+socket.emit('recieve', { FEN: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' });
 
 socket.on('makeMove', function(msg) {
     console.log(msg);
