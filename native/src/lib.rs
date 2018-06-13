@@ -28,8 +28,6 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
         println!("{:#?}", item);
     }
 
-    println!("Hallo I bims");
-
     Ok(JsString::new(call.scope, "e2e4").unwrap())
 }
 
