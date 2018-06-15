@@ -5,9 +5,7 @@ extern crate chess;
 use neon::vm::{Call, JsResult, This, FunctionCall};
 use neon::js::{JsString, Value};
 
-use chess::MoveGen;
-use chess::Board;
-use chess::EMPTY;
+use chess::{ MoveGen, Board };
 
 
 trait CheckArgument<'a> {
@@ -24,13 +22,25 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
     let fen: String = call.check_argument::<JsString>(0)?.value();
 
     let board = Board::from_fen(fen.to_owned()).unwrap();
-    let mut iterable = MoveGen::new(board, true);
+    let iterable = MoveGen::new(board, true);
+
+    let mut ret: String = "[".to_string();
+    let mut count: usize = 0;
+    let size: usize = iterable.len();
 
     for item in iterable {
-        println!("{:#?}", item.to_string());
+        ret.push_str(&item.to_string());
+
+        if count < size - 1 {
+            ret.push_str(&", ");
+        }
+
+        count += 1;
     }
 
-    Ok(JsString::new(call.scope, "e2e4").unwrap())
+    ret.push_str(&"]");
+
+    Ok(JsString::new(call.scope, &ret).unwrap())
 }
 
 register_module!(m, {
