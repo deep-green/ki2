@@ -12,9 +12,8 @@ matrix:
         - "node"
 
     - language: rust
-      rust:
-        - nightly
       install:
+        - rustup install nightly
         - npm install --global neon-cli
       script:
         - "neon build"
