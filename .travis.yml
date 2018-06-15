@@ -13,6 +13,7 @@ matrix:
 
     - language: rust
       install:
+        - rustup install nightly
         - npm install --global neon-cli
       script:
         - "neon build"
