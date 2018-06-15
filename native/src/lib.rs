@@ -1,10 +1,13 @@
 #[macro_use]
 extern crate neon;
-extern crate chess_move_gen;
+extern crate chess;
 
 use neon::vm::{Call, JsResult, This, FunctionCall};
 use neon::js::{JsString, Value};
-use chess_move_gen::*;
+
+use chess::MoveGen;
+use chess::Board;
+use chess::EMPTY;
 
 
 trait CheckArgument<'a> {
@@ -20,12 +23,11 @@ impl<'a, T: This> CheckArgument<'a> for FunctionCall<'a, T> {
 fn get_move(mut call: Call) -> JsResult<JsString> {
     let fen: String = call.check_argument::<JsString>(0)?.value();
 
-    let mut list = MoveVec::new();
-    let position = &Position::from_fen(&fen).unwrap();
-    legal_moves::<MoveVec>(position, &mut list);
+    let board = Board::from_fen(fen.to_owned()).unwrap();
+    let mut iterable = MoveGen::new(board, true);
 
-    for item in list.iter() {
-        println!("{:#?}", item);
+    for item in iterable {
+        println!("{:#?}", item.to_string());
     }
 
     Ok(JsString::new(call.scope, "e2e4").unwrap())
