@@ -6,12 +6,17 @@ cache:
     - "node_modules"
 
 matrix:
+  allow_failures:
+    - rust: nightly
+    
   include:
     - language: node_js
       node_js:
         - "node"
 
     - language: rust
+      rust:
+        - nightly
       install:
         - npm install --global neon-cli
       script:
