@@ -16,6 +16,7 @@ matrix:
 
     - language: rust
       rust:
+        - 1.28.0
         - nightly
       install:
         - npm install --global neon-cli
