@@ -128,6 +128,12 @@ const KING_EVAL_BLACK: [[f64; 8]; 8] = [
     [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0]
 ];
 
+
+fn get_piece_value(piece: char, x: i8, y: i8) -> f32 {
+    if !piece.is_alphabetic() { return null; }
+    return 0.0;
+}
+
 trait CheckArgument<'a> {
     fn check_argument<V: Value>(&mut self, i: i32) -> JsResult<'a, V>;
 }
