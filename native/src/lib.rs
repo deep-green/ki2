@@ -6,6 +6,16 @@ use neon::js::{JsString, Value};
 
 mod mov;
 
+trait CheckArgument<'a> {
+    fn check_argument<V: Value>(&mut self, i: i32) -> JsResult<'a, V>;
+}
+
+impl<'a, T: This> CheckArgument<'a> for FunctionCall<'a, T> {
+    fn check_argument<V: Value>(&mut self, i: i32) -> JsResult<'a, V> {
+        self.arguments.require(self.scope, i)?.check::<V>()
+    }
+}
+
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
     [5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0],
@@ -131,16 +141,6 @@ const KING_EVAL_BLACK: [[f64; 8]; 8] = [
 fn get_piece_value(piece: char, x: i8, y: i8) -> f32 {
     if !piece.is_alphabetic() { return null; }
     return 0.0;
-}
-
-trait CheckArgument<'a> {
-    fn check_argument<V: Value>(&mut self, i: i32) -> JsResult<'a, V>;
-}
-
-impl<'a, T: This> CheckArgument<'a> for FunctionCall<'a, T> {
-    fn check_argument<V: Value>(&mut self, i: i32) -> JsResult<'a, V> {
-        self.arguments.require(self.scope, i)?.check::<V>()
-    }
 }
 
 fn get_move(mut call: Call) -> JsResult<JsString> {
