@@ -1,5 +1,7 @@
 extern crate shakmaty;
 
+use shakmaty::Piece;
+
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
     [5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0],
@@ -122,7 +124,23 @@ const KING_EVAL_BLACK: [[f64; 8]; 8] = [
 ];
 
 
-fn get_piece_value(piece: char, x: i8, y: i8) -> f32 {
-    if !piece.is_alphabetic() { return 0.0; }
-    return 0.0;
+fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
+    let mut ret: f64 = 0.0;
+    let is_white: bool = piece.color.char().to_string().eq(&"White".to_string());
+
+    if piece.role.char().to_string().eq(&"Pawn".to_string()) {
+        ret = 10.0 + if is_white { PAWN_EVAL_WHITE[x][y] } else { PAWN_EVAL_BLACK[x][y] };
+    } else if piece.role.char().to_string().eq(&"Bishop".to_string()) {
+        ret = 30.0 + if is_white { BISHOP_EVAL_WHITE[x][y] } else { BISHOP_EVAL_BLACK[x][y] };
+    } else if piece.role.char().to_string().eq(&"Knight".to_string()) {
+        ret = 30.0 + if is_white { KNIGHT_EVAL_WHITE[x][y] } else { KNIGHT_EVAL_BLACK[x][y] };
+    } else if piece.role.char().to_string().eq(&"Rook".to_string()) {
+        ret = 50.0 + if is_white { ROOK_EVAL_WHITE[x][y] } else { ROOK_EVAL_BLACK[x][y] };
+    } else if piece.role.char().to_string().eq(&"Queen".to_string()) {
+        ret = 90.0 + QUEEN_EVAL[x][y];
+    } else if piece.role.char().to_string().eq(&"King".to_string()) {
+        ret = 900.0 + if is_white { KING_EVAL_WHITE[x][y] } else { KING_EVAL_BLACK[x][y] };
+    }
+
+    return ret;
 }
