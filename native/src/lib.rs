@@ -1,10 +1,13 @@
 #[macro_use]
 extern crate neon;
+extern crate shakmaty;
 
-use neon::vm::{Call, JsResult, This, FunctionCall};
-use neon::js::{JsString, Value};
+use neon::vm::{ Call, JsResult, This, FunctionCall };
+use neon::js::{ JsString, Value };
 
-mod mov;
+use shakmaty::{ Board, Position, Chess, Bitboard };
+use shakmaty::fen::Fen;
+
 mod board;
 
 trait CheckArgument<'a> {
@@ -20,7 +23,12 @@ impl<'a, T: This> CheckArgument<'a> for FunctionCall<'a, T> {
 fn get_move(mut call: Call) -> JsResult<JsString> {
     let fen: String = call.check_argument::<JsString>(0)?.value();
 
-    Ok(JsString::new(call.scope, &mov::get_moves(fen)).unwrap())
+    let parsed_fen: Fen = fen.parse().unwrap();
+    let board: Board = parsed_fen.board;
+
+    println!("{:?}", board);
+
+    Ok(JsString::new(call.scope, "e2e4").unwrap())
 }
 
 register_module!(m, {

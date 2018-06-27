@@ -1,3 +1,5 @@
+extern crate shakmaty;
+
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
     [5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0],
@@ -121,6 +123,6 @@ const KING_EVAL_BLACK: [[f64; 8]; 8] = [
 
 
 fn get_piece_value(piece: char, x: i8, y: i8) -> f32 {
-    if !piece.is_alphabetic() { return null; }
+    if !piece.is_alphabetic() { return 0.0; }
     return 0.0;
 }
