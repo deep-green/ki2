@@ -1,6 +1,6 @@
 extern crate shakmaty;
 
-use shakmaty::Piece;
+use shakmaty::{ Board, Piece, Square };
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
@@ -143,4 +143,15 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     }
 
     return ret;
+}
+
+fn evaluate_board(board: Board) -> f64 {
+    let mut totalvalue = 0.0;
+    for x in 0..8 {
+        for y in 0..8 {
+            let square = Square::from_coords(x, y).unwrap();
+            totalvalue += get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
+        }
+    }
+    return totalvalue;
 }
