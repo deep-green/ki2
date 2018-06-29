@@ -1,6 +1,6 @@
 extern crate shakmaty;
 
-use shakmaty::{ Board, Piece, Square };
+use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup };
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
@@ -158,7 +158,54 @@ pub fn evaluate_board(board: &Board) -> f64 {
     return totalvalue;
 }
 
-pub fn minimax(depth: i8) -> f64 {
-    let ret: f64 = 0.0;
-    return ret;
+fn max(x: f64, y:f64) -> f64 {
+    if x > y {
+        return x;
+    } else {
+        return y;
+    }
+}
+
+fn min(x: f64, y: f64) -> f64 {
+    if x < y {
+        return x;
+    } else {
+        return y;
+    }
+}
+
+pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool) -> f64 {
+    let mut best_move: f64 = 0.0;
+    let board: &Board = Setup::board(&final_chess);
+
+    if depth == 0 {
+        return -evaluate_board(board);
+    }
+
+    let moves: MoveList = Position::legals(&final_chess);
+
+    if is_maximising_player {
+        best_move = -9999.9;
+        for mov in moves {
+            let mut chess = final_chess.clone();
+            chess = Position::play(chess, &mov).unwrap();
+            best_move = max(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player));
+            alpha = max(alpha, best_move);
+            if beta <= alpha {
+                return best_move;
+            }
+        }
+    } else {
+        best_move = 9999.9;
+        for mov in moves {
+            let mut chess = final_chess.clone();
+            chess = Position::play(chess, &mov).unwrap();
+            best_move = min(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player));
+            beta = min(beta, best_move);
+            if beta <= alpha {
+                return best_move;
+            }
+        }
+    }
+    return best_move;
 }

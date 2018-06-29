@@ -24,10 +24,9 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
     let fen: String = call.check_argument::<JsString>(0)?.value();
 
     let setup: Fen = fen.parse().unwrap();
-    let position: Chess = setup.position().unwrap();
-    let board: &Board = Setup::board(&position);
+    let chess: Chess = setup.position().unwrap();
 
-    println!("{:?}", board::evaluate_board(board));
+    println!("{:?}", board::minimax(1, chess, -10000.0, 10000.0, true));
 
     Ok(JsString::new(call.scope, "e2e4").unwrap())
 }
