@@ -128,29 +128,31 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     let mut ret: f64 = 0.0;
     let is_white: bool = piece.color.char().to_string().eq(&"White".to_string());
 
-    if piece.role.char().to_string().eq(&"Pawn".to_string()) {
+    if piece.role.char().to_string().eq(&"p".to_string()) {
         ret = 10.0 + if is_white { PAWN_EVAL_WHITE[x][y] } else { PAWN_EVAL_BLACK[x][y] };
-    } else if piece.role.char().to_string().eq(&"Bishop".to_string()) {
+    } else if piece.role.char().to_string().eq(&"b".to_string()) {
         ret = 30.0 + if is_white { BISHOP_EVAL_WHITE[x][y] } else { BISHOP_EVAL_BLACK[x][y] };
-    } else if piece.role.char().to_string().eq(&"Knight".to_string()) {
+    } else if piece.role.char().to_string().eq(&"n".to_string()) {
         ret = 30.0 + if is_white { KNIGHT_EVAL_WHITE[x][y] } else { KNIGHT_EVAL_BLACK[x][y] };
-    } else if piece.role.char().to_string().eq(&"Rook".to_string()) {
+    } else if piece.role.char().to_string().eq(&"r".to_string()) {
         ret = 50.0 + if is_white { ROOK_EVAL_WHITE[x][y] } else { ROOK_EVAL_BLACK[x][y] };
-    } else if piece.role.char().to_string().eq(&"Queen".to_string()) {
+    } else if piece.role.char().to_string().eq(&"".to_string()) {
         ret = 90.0 + QUEEN_EVAL[x][y];
-    } else if piece.role.char().to_string().eq(&"King".to_string()) {
+    } else if piece.role.char().to_string().eq(&"k".to_string()) {
         ret = 900.0 + if is_white { KING_EVAL_WHITE[x][y] } else { KING_EVAL_BLACK[x][y] };
     }
 
     return ret;
 }
 
-fn evaluate_board(board: Board) -> f64 {
+pub fn evaluate_board(board: Board) -> f64 {
     let mut totalvalue = 0.0;
     for x in 0..8 {
         for y in 0..8 {
             let square = Square::from_coords(x, y).unwrap();
-            totalvalue += get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
+            if board.piece_at(square) != None {
+                totalvalue += get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
+            }
         }
     }
     return totalvalue;
