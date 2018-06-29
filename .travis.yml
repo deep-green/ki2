@@ -8,7 +8,10 @@ cache:
 matrix:
   include:
     - language: node_js
+      install:
+        - npm install --global neon-cli
       node_js:
+        - "neon build"
         - "node"
 
     - language: rust
