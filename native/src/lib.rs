@@ -27,7 +27,7 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
     let setup: Fen = fen.parse().unwrap();
     let chess: Chess = setup.position().unwrap();
 
-    println!("{:?}", board::minimax(1, chess, -10000.0, 10000.0, true));
+    println!("{:?}", board::minimax(5, chess, -10000.0, 10000.0, true));
 
     Ok(JsString::new(call.scope, "e2e4").unwrap())
 }
