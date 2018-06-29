@@ -23,10 +23,10 @@ impl<'a, T: This> CheckArgument<'a> for FunctionCall<'a, T> {
 fn get_move(mut call: Call) -> JsResult<JsString> {
     let fen: String = call.check_argument::<JsString>(0)?.value();
 
-    let parsed_fen: Fen = fen.parse().unwrap();
-    let board: Board = parsed_fen.board;
+    let setup: Fen = fen.parse().unwrap();
+    let position: Chess = setup.position().unwrap();
 
-    println!("{:?}", board::evaluate_board(board));
+    println!("{:?}", position.is_checkmate());
 
     Ok(JsString::new(call.scope, "e2e4").unwrap())
 }

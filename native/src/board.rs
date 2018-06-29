@@ -157,3 +157,8 @@ pub fn evaluate_board(board: Board) -> f64 {
     }
     return totalvalue;
 }
+
+pub fn minimax(depth: i8) -> f64 {
+    let ret: f64 = 0.0;
+    return ret;
+}
