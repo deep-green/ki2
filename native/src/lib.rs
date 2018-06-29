@@ -9,8 +9,9 @@ use shakmaty::{ Board, Position, Chess, Bitboard, Setup };
 use shakmaty::fen::Fen;
 
 mod board;
+mod tests;
 
-trait CheckArgument<'a> {
+pub trait CheckArgument<'a> {
     fn check_argument<V: Value>(&mut self, i: i32) -> JsResult<'a, V>;
 }
 
@@ -32,5 +33,6 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
 }
 
 register_module!(m, {
-    m.export("getMove", get_move)
+    m.export("getMove", get_move);
+    m.export("testEvaluateBoard", tests::test_evaluate_board)
 });

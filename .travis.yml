@@ -8,8 +8,12 @@ cache:
 matrix:
   include:
     - language: node_js
-      node_js:
-        - "node"
+      install:
+        - echo 1 | curl https://sh.rustup.rs -sSf | sh
+        - npm install --global neon-cli
+      script:
+        - "neon build"
+        - "npm test"
 
     - language: rust
       install:
