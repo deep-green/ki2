@@ -145,7 +145,7 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     return ret;
 }
 
-pub fn evaluate_board(board: Board) -> f64 {
+pub fn evaluate_board(board: &Board) -> f64 {
     let mut totalvalue = 0.0;
     for x in 0..8 {
         for y in 0..8 {
