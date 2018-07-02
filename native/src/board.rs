@@ -183,8 +183,6 @@ pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_
     }
 
     let moves: MoveList = Position::legals(&final_chess);
-    //println!("{:?}", moves);
-    //println!("{:?}", Board::occupied(&board));
 
     if is_maximising_player {
         best_move = -9999.9;
