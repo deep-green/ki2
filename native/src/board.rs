@@ -1,6 +1,6 @@
 extern crate shakmaty;
 
-use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup };
+use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard };
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
@@ -184,6 +184,8 @@ pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_
     }
 
     let moves: MoveList = Position::legals(&final_chess);
+    //println!("{:?}", moves);
+    //println!("{:?}", Board::occupied(&board));
 
     if is_maximising_player {
         best_move = -9999.9;
