@@ -5,7 +5,7 @@ extern crate shakmaty;
 use neon::vm::{ Call, JsResult, This, FunctionCall };
 use neon::js::{ JsString, Value };
 
-use shakmaty::{ Board, Position, Chess, Bitboard, Setup };
+use shakmaty::{ Position, Chess, Bitboard, Setup, Color };
 use shakmaty::fen::Fen;
 
 mod board;
@@ -26,8 +26,9 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
 
     let setup: Fen = fen.parse().unwrap();
     let chess: Chess = setup.position().unwrap();
+    let self_color: Color = setup.turn;
 
-    println!("{:?}", board::minimax(5, chess, -10000.0, 10000.0, true));
+    println!("{:?}", board::minimax(1, chess, -10000.0, 10000.0, true, self_color));
 
     Ok(JsString::new(call.scope, "e2e4").unwrap())
 }

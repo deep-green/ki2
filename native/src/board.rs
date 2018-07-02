@@ -1,6 +1,6 @@
 extern crate shakmaty;
 
-use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard };
+use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard, Color };
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
@@ -136,7 +136,7 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
         ret = 30.0 + if is_white { KNIGHT_EVAL_WHITE[x][y] } else { KNIGHT_EVAL_BLACK[x][y] };
     } else if piece.role.char().to_string().eq(&"r".to_string()) {
         ret = 50.0 + if is_white { ROOK_EVAL_WHITE[x][y] } else { ROOK_EVAL_BLACK[x][y] };
-    } else if piece.role.char().to_string().eq(&"".to_string()) {
+    } else if piece.role.char().to_string().eq(&"q".to_string()) {
         ret = 90.0 + QUEEN_EVAL[x][y];
     } else if piece.role.char().to_string().eq(&"k".to_string()) {
         ret = 900.0 + if is_white { KING_EVAL_WHITE[x][y] } else { KING_EVAL_BLACK[x][y] };
@@ -145,12 +145,13 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     return ret;
 }
 
-pub fn evaluate_board(board: &Board) -> f64 {
+pub fn evaluate_board(board: &Board, self_color: Color) -> f64 {
     let mut totalvalue = 0.0;
     for x in 0..8 {
         for y in 0..8 {
             let square = Square::from_coords(x, y).unwrap();
             if board.piece_at(square) != None {
+                /* TODO check color of every turn if turn_color == self_color add positive value else add negative value */
                 totalvalue += get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
             }
         }
@@ -174,12 +175,13 @@ fn min(x: f64, y: f64) -> f64 {
     }
 }
 
-pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool) -> f64 {
+pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool, self_color: Color) -> f64 {
     let mut best_move: f64 = 0.0;
     let board: &Board = Setup::board(&final_chess);
 
     if depth == 0 {
-        return -evaluate_board(board);
+        /* TODO get color of every turn and add to parameters */
+        return -evaluate_board(board, self_color);
     }
 
     let moves: MoveList = Position::legals(&final_chess);
@@ -189,7 +191,7 @@ pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_
         for mov in moves {
             let mut chess = final_chess.clone();
             chess = Position::play(chess, &mov).unwrap();
-            best_move = max(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player));
+            best_move = max(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player, self_color));
             alpha = max(alpha, best_move);
             if beta <= alpha {
                 return best_move;
@@ -200,7 +202,7 @@ pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_
         for mov in moves {
             let mut chess = final_chess.clone();
             chess = Position::play(chess, &mov).unwrap();
-            best_move = min(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player));
+            best_move = min(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player, self_color));
             beta = min(beta, best_move);
             if beta <= alpha {
                 return best_move;
