@@ -1,7 +1,7 @@
 use neon::vm::{ Call, JsResult, This, FunctionCall };
 use neon::js::{ JsString, JsNumber, Value };
 
-use shakmaty::{ Board, Position, Chess, Bitboard, Setup };
+use shakmaty::{ Board, Position, Chess, Bitboard, Setup, Color };
 use shakmaty::fen::Fen;
 
 use board;
@@ -20,5 +20,5 @@ pub fn test_evaluate_board(mut call: Call) -> JsResult<JsNumber> {
     let pos: Chess = Chess::default();
     let board: &Board = Setup::board(&pos);
 
-    Ok(JsNumber::new(call.scope, board::evaluate_board(board)))
+    Ok(JsNumber::new(call.scope, board::evaluate_board(board, Color::White, Color::White)))
 }

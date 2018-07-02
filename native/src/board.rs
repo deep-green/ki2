@@ -145,14 +145,18 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     return ret;
 }
 
-pub fn evaluate_board(board: &Board, self_color: Color) -> f64 {
+pub fn evaluate_board(board: &Board, self_color: Color, turn_color: Color) -> f64 {
     let mut totalvalue = 0.0;
     for x in 0..8 {
         for y in 0..8 {
             let square = Square::from_coords(x, y).unwrap();
             if board.piece_at(square) != None {
-                /* TODO check color of every turn if turn_color == self_color add positive value else add negative value */
-                totalvalue += get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
+                let piece_value = get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
+                if self_color == turn_color {
+                    totalvalue += piece_value;
+                } else {
+                    totalvalue -= piece_value;
+                }
             }
         }
     }
@@ -178,13 +182,13 @@ fn min(x: f64, y: f64) -> f64 {
 pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool, self_color: Color) -> f64 {
     let mut best_move: f64 = 0.0;
     let board: &Board = Setup::board(&final_chess);
+    let moves: MoveList = Position::legals(&final_chess);
+    let color: Color = Setup::turn(&final_chess);
 
     if depth == 0 {
-        /* TODO get color of every turn and add to parameters */
-        return -evaluate_board(board, self_color);
+        return -evaluate_board(board, self_color, color);
     }
 
-    let moves: MoveList = Position::legals(&final_chess);
     //println!("{:?}", moves);
     //println!("{:?}", Board::occupied(&board));
 
