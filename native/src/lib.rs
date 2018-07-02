@@ -5,7 +5,7 @@ extern crate shakmaty;
 use neon::vm::{ Call, JsResult, This, FunctionCall };
 use neon::js::{ JsString, Value };
 
-use shakmaty::{ Board, Position, Chess, Bitboard, Setup };
+use shakmaty::{ Position, Chess, Bitboard, Setup, Color };
 use shakmaty::fen::Fen;
 
 mod board;

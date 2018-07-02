@@ -1,6 +1,6 @@
 extern crate shakmaty;
 
-use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard };
+use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard, Color };
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
@@ -151,7 +151,7 @@ pub fn evaluate_board(board: &Board, self_color: Color) -> f64 {
         for y in 0..8 {
             let square = Square::from_coords(x, y).unwrap();
             if board.piece_at(square) != None {
-                if {}
+                /* TODO check color of every turn if turn_color == self_color add positive value else add negative value */
                 totalvalue += get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
             }
         }
@@ -180,6 +180,7 @@ pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_
     let board: &Board = Setup::board(&final_chess);
 
     if depth == 0 {
+        /* TODO get color of every turn and add to parameters */
         return -evaluate_board(board, self_color);
     }
 
@@ -192,7 +193,7 @@ pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_
         for mov in moves {
             let mut chess = final_chess.clone();
             chess = Position::play(chess, &mov).unwrap();
-            best_move = max(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player));
+            best_move = max(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player, self_color));
             alpha = max(alpha, best_move);
             if beta <= alpha {
                 return best_move;
@@ -203,7 +204,7 @@ pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_
         for mov in moves {
             let mut chess = final_chess.clone();
             chess = Position::play(chess, &mov).unwrap();
-            best_move = min(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player));
+            best_move = min(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player, self_color));
             beta = min(beta, best_move);
             if beta <= alpha {
                 return best_move;
