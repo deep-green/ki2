@@ -26,14 +26,13 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
 
     let setup: Fen = fen.parse().unwrap();
     let chess: Chess = setup.position().unwrap();
-    let self_color: Color = setup.turn;
 
-    println!("{:?}", board::minimax_root(4, chess, true, self_color));
+    println!("{:?}", board::minimax_root(4, chess, true));
 
     Ok(JsString::new(call.scope, "e2e4").unwrap())
 }
 
 register_module!(m, {
-    m.export("getMove", get_move);
-    m.export("testEvaluateBoard", tests::test_evaluate_board)
+    m.export("getMove", get_move)
+    //m.export("testEvaluateBoard", tests::test_evaluate_board)
 });
