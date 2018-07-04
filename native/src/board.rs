@@ -246,18 +246,14 @@ pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximi
             best_move = -9999.9;
             best_move = max(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player, self_color));
             alpha = max(alpha, best_move);
-
-            if beta <= alpha {
-                return best_move;
-            }
         } else {
             best_move = 9999.9;
             best_move = min(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player, self_color));
             beta = min(alpha, best_move);
+        }
 
-            if beta <= alpha {
-                return best_move;
-            }
+        if beta <= alpha {
+            return best_move;
         }
     }
 
