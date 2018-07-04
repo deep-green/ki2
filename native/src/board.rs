@@ -205,7 +205,7 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> Stri
     let best_move =  Arc::new(Mutex::new(moves[0].clone()));;
 
     // Benchmark
-    // let start = SystemTime::now();
+    let start = SystemTime::now();
     for mov in moves {
         let best_move_value = Arc::clone(&best_move_value);
         let best_move = Arc::clone(&best_move);
@@ -234,9 +234,12 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> Stri
     let mut best_move = best_move.lock().unwrap();
     let ret = format!("{}{}", (&*best_move).from().unwrap().to_string(), (&*best_move).to().to_string());
 
-    // Benchmark
-    // let end = SystemTime::now();
-    // let difference = end.duration_since(start);
+    println!("{}", *best_move_value.lock().unwrap());
+
+    //Benchmark
+    let end = SystemTime::now();
+    let difference = end.duration_since(start);
+    println!("{:?}", difference);
 
     return ret;
 }
