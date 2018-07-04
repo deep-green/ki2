@@ -158,7 +158,7 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     return ret;
 }
 
-pub fn evaluate_board(board: &Board, self_color: Color, turn_color: Color) -> f64 {
+pub fn evaluate_board(board: &Board, self_color: Color, turn_color: char) -> f64 {
     let mut totalvalue = 0.0;
     for x in 0..8 {
         for y in 0..8 {
@@ -167,7 +167,7 @@ pub fn evaluate_board(board: &Board, self_color: Color, turn_color: Color) -> f6
             if board.piece_at(square) != None {
                 let piece_value = get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
 
-                if self_color.char().to_string().eq(&turn_color.char().to_string()) {
+                if self_color.char().eq(&turn_color) {
                     totalvalue += piece_value;
                 } else {
                     totalvalue -= piece_value;
@@ -213,8 +213,6 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_co
         }
     }
 
-    println!("{:?}", best_move_value);
-
     return best_move;
 }
 
@@ -224,14 +222,14 @@ pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximi
     let moves: MoveList = Position::legals(&chess);
 
     if depth == 0 {
-        let mut color: Color = Color::White;
+        let mut color: char = 'w';
         if is_maximising_player == true {
-            color = self_color;
+            color = self_color.char();
         } else {
-            if self_color.is_white() {
-                color = Color::White;
+            if self_color.is_white() == true {
+                color = 'w';
             } else {
-                color = Color::Black;
+                color = 'b';
             }
         }
 

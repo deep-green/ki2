@@ -20,5 +20,5 @@ pub fn test_evaluate_board(mut call: Call) -> JsResult<JsNumber> {
     let pos: Chess = Chess::default();
     let board: &Board = Setup::board(&pos);
 
-    Ok(JsNumber::new(call.scope, board::evaluate_board(board, Color::White, Color::White)))
+    Ok(JsNumber::new(call.scope, board::evaluate_board(board, Color::White, 'w')))
 }
