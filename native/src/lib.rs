@@ -28,9 +28,10 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
     let chess: Chess = setup.position().unwrap();
     let self_color: Color = setup.turn;
 
-    println!("{:?}", board::minimax_root(5, chess, true, self_color));
+    let best_move = board::minimax_root(5, chess, true, self_color)
+    println!("{:?}", best_move);
 
-    Ok(JsString::new(call.scope, "e2e4").unwrap())
+    Ok(JsString::new(call.scope, &best_move).unwrap())
 }
 
 register_module!(m, {
