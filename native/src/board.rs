@@ -1,6 +1,6 @@
 extern crate shakmaty;
 
-use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard, Color };
+use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard, Color, Move };
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
@@ -24,7 +24,7 @@ const PAWN_EVAL_BLACK: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0]
 ];
 
-const KNIGHT_EVAL_WHITE: [[f64; 8]; 8]  = [
+const KNIGHT_EVAL: [[f64; 8]; 8]  = [
     [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
     [-4.0, -2.0,  0.0,  0.0,  0.0,  0.0, -2.0, -4.0],
     [-3.0,  0.0,  1.0,  1.5,  1.5,  1.0,  0.0, -3.0],
@@ -32,17 +32,6 @@ const KNIGHT_EVAL_WHITE: [[f64; 8]; 8]  = [
     [-3.0,  0.0,  1.5,  2.0,  2.0,  1.5,  0.0, -3.0],
     [-3.0,  0.5,  1.0,  1.5,  1.5,  1.0,  0.5, -3.0],
     [-4.0, -2.0,  0.0,  0.5,  0.5,  0.0, -2.0, -4.0],
-    [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
-];
-
-const KNIGHT_EVAL_BLACK: [[f64; 8]; 8] = [
-    [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
-    [-4.0, -2.0,  0.0,  0.5,  0.5,  0.0, -2.0, -4.0],
-    [-3.0,  0.5,  1.0,  1.5,  1.5,  1.0,  0.5, -3.0],
-    [-3.0,  0.0,  1.5,  2.0,  2.0,  1.5,  0.0, -3.0],
-    [-3.0,  0.5,  1.5,  2.0,  2.0,  1.5,  0.5, -3.0],
-    [-3.0,  0.0,  1.0,  1.5,  1.5,  1.0,  0.0, -3.0],
-    [-4.0, -2.0,  0.0,  0.0,  0.0,  0.0, -2.0, -4.0],
     [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
 ];
 
@@ -126,20 +115,44 @@ const KING_EVAL_BLACK: [[f64; 8]; 8] = [
 
 fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     let mut ret: f64 = 0.0;
-    let is_white: bool = piece.color.char().to_string().eq(&"White".to_string());
+    let is_white: bool = piece.color.char().to_string().eq(&"w".to_string());
 
     if piece.role.char().to_string().eq(&"p".to_string()) {
-        ret = 10.0 + if is_white { PAWN_EVAL_WHITE[x][y] } else { PAWN_EVAL_BLACK[x][y] };
+        ret = 10.0;
+
+        if is_white {
+            ret += PAWN_EVAL_WHITE[x][y];
+        } else {
+            ret += PAWN_EVAL_BLACK[x][y];
+        }
     } else if piece.role.char().to_string().eq(&"b".to_string()) {
-        ret = 30.0 + if is_white { BISHOP_EVAL_WHITE[x][y] } else { BISHOP_EVAL_BLACK[x][y] };
+        ret = 30.0;
+
+        if is_white {
+            ret += BISHOP_EVAL_WHITE[x][y];
+        } else {
+            ret += BISHOP_EVAL_BLACK[x][y];
+        }
     } else if piece.role.char().to_string().eq(&"n".to_string()) {
-        ret = 30.0 + if is_white { KNIGHT_EVAL_WHITE[x][y] } else { KNIGHT_EVAL_BLACK[x][y] };
+        ret = 30.0 + KNIGHT_EVAL[x][y];
     } else if piece.role.char().to_string().eq(&"r".to_string()) {
-        ret = 50.0 + if is_white { ROOK_EVAL_WHITE[x][y] } else { ROOK_EVAL_BLACK[x][y] };
+        ret = 50.0;
+
+        if is_white {
+            ret += ROOK_EVAL_WHITE[x][y];
+        } else {
+            ret += ROOK_EVAL_BLACK[x][y];
+        }
     } else if piece.role.char().to_string().eq(&"q".to_string()) {
         ret = 90.0 + QUEEN_EVAL[x][y];
     } else if piece.role.char().to_string().eq(&"k".to_string()) {
-        ret = 900.0 + if is_white { KING_EVAL_WHITE[x][y] } else { KING_EVAL_BLACK[x][y] };
+        ret = 900.0;
+
+        if is_white {
+            ret += KING_EVAL_WHITE[x][y];
+        } else {
+            ret += KING_EVAL_BLACK[x][y];
+        }
     }
 
     return ret;
@@ -150,9 +163,11 @@ pub fn evaluate_board(board: &Board, self_color: Color, turn_color: Color) -> f6
     for x in 0..8 {
         for y in 0..8 {
             let square = Square::from_coords(x, y).unwrap();
+
             if board.piece_at(square) != None {
                 let piece_value = get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
-                if self_color == turn_color {
+
+                if self_color.char().to_string().eq(&turn_color.char().to_string()) {
                     totalvalue += piece_value;
                 } else {
                     totalvalue -= piece_value;
@@ -160,6 +175,7 @@ pub fn evaluate_board(board: &Board, self_color: Color, turn_color: Color) -> f6
             }
         }
     }
+
     return totalvalue;
 }
 
@@ -179,41 +195,63 @@ fn min(x: f64, y: f64) -> f64 {
     }
 }
 
-pub fn minimax(depth: i8, final_chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool, self_color: Color) -> f64 {
+pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_color: Color) -> Move {
+    let moves: MoveList = Position::legals(&chess);
+    let mut best_move_value: f64 = -9000.0;
+    let mut value: f64 = best_move_value;
+    let mut best_move: Move = moves[0].clone();
+
+    for mov in moves {
+        let chess_copy: Chess = chess.clone();
+        let undo_chess = chess_copy.play(&mov).unwrap();
+
+        value = minimax(depth, undo_chess, -10000.0, 10000.0, is_maximising_player, self_color);
+
+        if value >= best_move_value {
+            best_move_value = value;
+            best_move = mov;
+        }
+    }
+
+    println!("{:?}", best_move_value);
+
+    return best_move;
+}
+
+pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool, self_color: Color) -> f64 {
     let mut best_move: f64 = 0.0;
-    let board: &Board = Setup::board(&final_chess);
-    let moves: MoveList = Position::legals(&final_chess);
-    let color: Color = Setup::turn(&final_chess);
+    let board: &Board = Setup::board(&chess);
+    let moves: MoveList = Position::legals(&chess);
 
     if depth == 0 {
+        let mut color: Color = Color::White;
+        if is_maximising_player == true {
+            color = self_color;
+        } else {
+            if self_color.is_white() {
+                color = Color::White;
+            } else {
+                color = Color::Black;
+            }
+        }
+
         return -evaluate_board(board, self_color, color);
     }
 
-    //println!("{:?}", moves);
-    //println!("{:?}", Board::occupied(&board));
+    for mov in moves {
+        let chess_copy: Chess = chess.clone();
+        let undo_chess = chess_copy.play(&mov).unwrap();
 
-    if is_maximising_player {
-        best_move = -9999.9;
-        for mov in moves {
-            let mut chess = final_chess.clone();
-            chess = Position::play(chess, &mov).unwrap();
-            best_move = max(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player, self_color));
+        if is_maximising_player == true {
+            best_move = -9999.9;
             alpha = max(alpha, best_move);
-            if beta <= alpha {
-                return best_move;
-            }
-        }
-    } else {
-        best_move = 9999.9;
-        for mov in moves {
-            let mut chess = final_chess.clone();
-            chess = Position::play(chess, &mov).unwrap();
-            best_move = min(best_move, minimax(depth - 1, chess, alpha, beta, !is_maximising_player, self_color));
-            beta = min(beta, best_move);
-            if beta <= alpha {
-                return best_move;
-            }
+            best_move = max(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player, self_color));
+        } else {
+            best_move = 9999.9;
+            alpha = min(alpha, best_move);
+            best_move = min(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player, self_color));
         }
     }
+
     return best_move;
 }
