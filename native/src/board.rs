@@ -1,7 +1,9 @@
 extern crate shakmaty;
 
+use std::time::{Duration, SystemTime};
 use std::sync::{Arc, Mutex};
 use std::thread;
+use std::time;
 use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard, Color, Move };
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
@@ -205,6 +207,8 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_co
     let best_move_value = Arc::new(Mutex::new(-9000.0));
     let best_move =  Arc::new(Mutex::new(moves[0].clone()));;
 
+    // Benchmark
+    // let start = SystemTime::now();
     for mov in moves {
         let best_move_value = Arc::clone(&best_move_value);
         let best_move = Arc::clone(&best_move);
@@ -230,10 +234,13 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_co
         h.join().unwrap();
     }
 
-    println!("{:?}", best_move_value);
-
     let mut best_move = best_move.lock().unwrap();
     let ret = format!("{}{}", (&*best_move).from().unwrap().to_string(), (&*best_move).to().to_string());
+
+    // Benchmark
+    // let end = SystemTime::now();
+    // let difference = end.duration_since(start);
+
     return ret;
 }
 

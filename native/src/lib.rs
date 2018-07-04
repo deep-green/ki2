@@ -28,7 +28,7 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
     let chess: Chess = setup.position().unwrap();
     let self_color: Color = setup.turn;
 
-    println!("{:?}", board::minimax_root(6, chess, true, self_color));
+    println!("{:?}", board::minimax_root(5, chess, true, self_color));
 
     Ok(JsString::new(call.scope, "e2e4").unwrap())
 }
