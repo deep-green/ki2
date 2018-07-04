@@ -1,5 +1,7 @@
 extern crate shakmaty;
 
+use std::sync::{Arc, Mutex};
+use std::thread;
 use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard, Color, Move };
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
@@ -155,6 +157,7 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
         }
     }
 
+
     return ret;
 }
 
@@ -195,25 +198,43 @@ fn min(x: f64, y: f64) -> f64 {
     }
 }
 
-pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_color: Color) -> Move {
+pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_color: Color) -> String {
+    let mut hc = vec![];
+
     let moves: MoveList = Position::legals(&chess);
-    let mut best_move_value: f64 = -9000.0;
-    let mut value: f64 = best_move_value;
-    let mut best_move: Move = moves[0].clone();
+    let best_move_value = Arc::new(Mutex::new(-9000.0));
+    let best_move =  Arc::new(Mutex::new(moves[0].clone()));;
 
     for mov in moves {
+        let best_move_value = Arc::clone(&best_move_value);
+        let best_move = Arc::clone(&best_move);
         let chess_copy: Chess = chess.clone();
-        let undo_chess: Chess = chess_copy.play(&mov).unwrap();
+        let h = thread::spawn(move || {
+            let undo_chess: Chess = chess_copy.play(&mov).unwrap();
 
-        value = minimax(depth, undo_chess, -10000.0, 10000.0, is_maximising_player, self_color);
+            let value = minimax(depth, undo_chess, -10000.0, 10000.0, is_maximising_player, self_color);
 
-        if value >= best_move_value {
-            best_move_value = value;
-            best_move = mov;
-        }
+            let mut best_move_value = best_move_value.lock().unwrap();
+            if value >= *best_move_value {
+                *best_move_value = value;
+
+                let mut best_move = best_move.lock().unwrap();
+                *best_move = mov;
+            }
+        });
+
+        hc.push(h);
     }
 
-    return best_move;
+    for h in hc {
+        h.join().unwrap();
+    }
+
+    println!("{:?}", best_move_value);
+
+    let mut best_move = best_move.lock().unwrap();
+    let ret = format!("{}{}", (&*best_move).from().unwrap().to_string(), (&*best_move).to().to_string());
+    return ret;
 }
 
 pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool, self_color: Color) -> f64 {
@@ -227,13 +248,13 @@ pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximi
             color = self_color.char();
         } else {
             if self_color.is_white() == true {
-                color = 'w';
-            } else {
                 color = 'b';
+            } else {
+                color = 'w';
             }
         }
 
-        return -evaluate_board(board, self_color, color);
+        return evaluate_board(board, self_color, color);
     }
 
     for mov in moves {
