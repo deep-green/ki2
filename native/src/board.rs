@@ -203,7 +203,7 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_co
 
     for mov in moves {
         let chess_copy: Chess = chess.clone();
-        let undo_chess = chess_copy.play(&mov).unwrap();
+        let undo_chess: Chess = chess_copy.play(&mov).unwrap();
 
         value = minimax(depth, undo_chess, -10000.0, 10000.0, is_maximising_player, self_color);
 
@@ -244,12 +244,20 @@ pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximi
 
         if is_maximising_player == true {
             best_move = -9999.9;
-            alpha = max(alpha, best_move);
             best_move = max(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player, self_color));
+            alpha = max(alpha, best_move);
+
+            if beta <= alpha {
+                return best_move;
+            }
         } else {
             best_move = 9999.9;
-            alpha = min(alpha, best_move);
             best_move = min(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player, self_color));
+            beta = min(alpha, best_move);
+
+            if beta <= alpha {
+                return best_move;
+            }
         }
     }
 
