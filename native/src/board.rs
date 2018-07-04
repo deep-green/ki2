@@ -119,7 +119,7 @@ const KING_EVAL_BLACK: [[f64; 8]; 8] = [
 
 fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     let mut ret: f64 = 0.0;
-    let is_white: bool = piece.color.char().to_string().eq(&"w".to_string());
+    let is_white: bool = Color::is_white(piece.color);
 
     if piece.role.char().to_string().eq(&"p".to_string()) {
         ret = 10.0;
@@ -158,25 +158,23 @@ fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
             ret += KING_EVAL_BLACK[x][y];
         }
     }
-
-
-    return ret;
+    if is_white {
+        return ret;
+    } else {
+        return -ret;
+    }
 }
 
-pub fn evaluate_board(board: &Board, self_color: Color, turn_color: char) -> f64 {
+pub fn evaluate_board(chess: Chess) -> f64 {
     let mut totalvalue = 0.0;
     for x in 0..8 {
         for y in 0..8 {
-            let square = Square::from_coords(x, y).unwrap();
+            let board = Setup::board(&chess);
+            let mut square = Square::from_coords(y, x).unwrap();
+            square = square.flip_vertical();
 
             if board.piece_at(square) != None {
-                let piece_value = get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
-
-                if self_color.char().eq(&turn_color) {
-                    totalvalue += piece_value;
-                } else {
-                    totalvalue -= piece_value;
-                }
+                totalvalue += get_piece_value(&board.piece_at(square).unwrap(), x as usize, y as usize);
             }
         }
     }
@@ -200,9 +198,8 @@ fn min(x: f64, y: f64) -> f64 {
     }
 }
 
-pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_color: Color) -> String {
+pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> String {
     let mut hc = vec![];
-
     let moves: MoveList = Position::legals(&chess);
     let best_move_value = Arc::new(Mutex::new(-9000.0));
     let best_move =  Arc::new(Mutex::new(moves[0].clone()));;
@@ -216,7 +213,7 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_co
         let h = thread::spawn(move || {
             let undo_chess: Chess = chess_copy.play(&mov).unwrap();
 
-            let value = minimax(depth, undo_chess, -10000.0, 10000.0, is_maximising_player, self_color);
+            let value = minimax(depth, undo_chess, -10000.0, 10000.0, is_maximising_player);
 
             let mut best_move_value = best_move_value.lock().unwrap();
             if value >= *best_move_value {
@@ -244,24 +241,12 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool, self_co
     return ret;
 }
 
-pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool, self_color: Color) -> f64 {
+pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool) -> f64 {
     let mut best_move: f64 = 0.0;
-    let board: &Board = Setup::board(&chess);
     let moves: MoveList = Position::legals(&chess);
 
     if depth == 0 {
-        let mut color: char = 'w';
-        if is_maximising_player == true {
-            color = self_color.char();
-        } else {
-            if self_color.is_white() == true {
-                color = 'b';
-            } else {
-                color = 'w';
-            }
-        }
-
-        return evaluate_board(board, self_color, color);
+        return -evaluate_board(chess);
     }
 
     for mov in moves {
@@ -269,12 +254,12 @@ pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximi
         let undo_chess = chess_copy.play(&mov).unwrap();
 
         if is_maximising_player == true {
-            best_move = -9999.9;
-            best_move = max(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player, self_color));
+            best_move = -9999.0;
+            best_move = max(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player));
             alpha = max(alpha, best_move);
         } else {
-            best_move = 9999.9;
-            best_move = min(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player, self_color));
+            best_move = 9999.0;
+            best_move = min(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player));
             beta = min(alpha, best_move);
         }
 
