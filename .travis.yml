@@ -4,6 +4,8 @@ notifications:
 matrix:
   include:
     - language: node_js
+      node_js:
+        "8.11.2"
       install:
         - curl https://sh.rustup.rs -sSf | sh -s -- -y
         - npm install --global neon-cli
