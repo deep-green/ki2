@@ -9,7 +9,7 @@ matrix:
   include:
     - language: node_js
       install:
-        - curl https://sh.rustup.rs -sSf | sh -y
+        - curl https://sh.rustup.rs -sSf | sh -s -- -y
         - npm install --global neon-cli
       script:
         - "neon build"
