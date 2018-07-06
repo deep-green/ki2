@@ -8,9 +8,10 @@ cache:
 matrix:
   include:
     - language: node_js
-      before_script:
+      install:
         - curl https://sh.rustup.rs -sSf | sh -s -- -y
         - npm install --global neon-cli
+        - npm install -f
       script:
         - "neon build"
         - "npm test"
