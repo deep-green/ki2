@@ -12,10 +12,10 @@ matrix:
         - npm install -f
       script:
         - "neon build"
-        - "npm test"
 
     - language: rust
       install:
         - npm install --global neon-cli
       script:
         - "neon build"
+        - "npm test"
