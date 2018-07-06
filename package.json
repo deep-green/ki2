@@ -9,21 +9,18 @@
   },
   "authors": [
     "reinkepatrick <patrick.reinke@fh-bielefeld.de>",
-    "martistuwe"
+    "martistuwe <marti_niklas.stuwe@fh-bielefeld.de>"
   ],
   "license": "MIT",
   "dependencies": {
-    "chess.js": "^0.10.2",
     "express": "^4.16.3",
     "neon-cli": "^0.1.23",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "jest": "^23.3.0"
   },
   "scripts": {
     "start": "node lib/app.js",
     "build": "neon build",
     "test": "jest"
-  },
-  "devDependencies": {
-    "jest": "^22.4.4"
   }
 }
