@@ -250,10 +250,10 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> Stri
             let undo_chess: Chess = chess_copy.play(&mov).unwrap();
             let cmp_value_chess = undo_chess.clone();
 
-            let value = minimax(depth, undo_chess, -10000.0, 10000.0, is_maximising_player);
+            let value = minimax(depth, undo_chess, -10000.0, 10000.0, !is_maximising_player);
 
             let mut best_move_value = best_move_value.lock().unwrap();
-            if value >= *best_move_value {
+            if value > *best_move_value {
                 *best_move_value = value;
 
                 let mut best_fen = best_fen.lock().unwrap();
@@ -306,11 +306,25 @@ pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximi
 
         if is_maximising_player == true {
             best_move = -9999.0;
+
+            let checkmate_check = undo_chess.clone();
             best_move = max(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player));
+
+            if checkmate_check.is_checkmate() == true {
+                best_move = best_move + 500.0;
+            }
+
             alpha = max(alpha, best_move);
         } else {
             best_move = 9999.0;
+
+            let checkmate_check = undo_chess.clone();
             best_move = min(best_move, minimax(depth - 1, undo_chess, alpha, beta, !is_maximising_player));
+
+            if checkmate_check.is_checkmate() == true {
+                best_move = best_move - 500.0;
+            }
+
             beta = min(beta, best_move);
         }
 
