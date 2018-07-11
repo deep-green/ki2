@@ -1,10 +1,15 @@
 notifications:
   email: false
 
+cache:
+  directories:
+    - "node_modules"
+
 matrix:
   include:
     - language: rust
       install:
+        - npm install
         - npm install --global neon-cli
       script:
         - "neon build"

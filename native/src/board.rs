@@ -116,7 +116,14 @@ const KING_EVAL_BLACK: [[f64; 8]; 8] = [
     [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0]
 ];
 
-
+/// Returns the value of the piece based on the role and position on the board.
+///
+/// # Arguments
+///
+/// * `piece` - The piece to check
+/// * `x` - Rank of the piece
+/// * `y` - File of the piece
+///
 pub fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     let mut ret: f64 = 0.0;
     let is_white: bool = Color::is_white(piece.color);
@@ -165,6 +172,12 @@ pub fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     }
 }
 
+/// Evaluates the board and returns it's value.
+///
+/// # Arguments
+///
+/// * `chess` - Chessboard
+///
 pub fn evaluate_board(chess: Chess) -> f64 {
     let mut totalvalue = 0.0;
     for x in 0..8 {
@@ -182,7 +195,14 @@ pub fn evaluate_board(chess: Chess) -> f64 {
     return totalvalue;
 }
 
-fn max(x: f64, y:f64) -> f64 {
+/// Returns the higher value
+///
+/// # Arguments
+///
+/// * `x` - First value to check
+/// * `y` - second value to check
+///
+pub fn max(x: f64, y:f64) -> f64 {
     if x > y {
         return x;
     } else {
@@ -190,7 +210,14 @@ fn max(x: f64, y:f64) -> f64 {
     }
 }
 
-fn min(x: f64, y: f64) -> f64 {
+/// Returns the lower value
+///
+/// # Arguments
+///
+/// * `x` - First value to check
+/// * `y` - second value to check
+///
+pub fn min(x: f64, y: f64) -> f64 {
     if x < y {
         return x;
     } else {
@@ -198,6 +225,14 @@ fn min(x: f64, y: f64) -> f64 {
     }
 }
 
+/// Rootfunction of minimax. Iterates through all moves of the current board and returns the most promising as `String`.
+///
+/// # Arguments
+///
+/// * `depth` - Depth for building the decisiontree
+/// * `chess` - `Chess of current board`
+/// * `is_maximising_player` - Maximise or minimise player?
+///
 pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> String {
     let mut hc = vec![];
     let moves: MoveList = Position::legals(&chess);
@@ -244,6 +279,16 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> Stri
     return ret;
 }
 
+/// Minimax function builds the tree, evaluates it and returns it's value as `f64`
+///
+/// # Arguments
+///
+/// * `depth` - Depth for building the decisiontree
+/// * `chess` - `Chess` to evaluate
+/// * `alpha` - current value of best move
+/// * `beta` - current value of worst move
+/// * `is_maximising_player` - Maximise or minimise player?
+///
 pub fn minimax(depth: i8, chess: Chess, mut alpha: f64, mut beta: f64, is_maximising_player: bool) -> f64 {
     let mut best_move: f64 = 0.0;
     let moves: MoveList = Position::legals(&chess);
