@@ -117,7 +117,7 @@ const KING_EVAL_BLACK: [[f64; 8]; 8] = [
 ];
 
 
-fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
+pub fn get_piece_value(piece: &Piece, x: usize, y: usize) -> f64 {
     let mut ret: f64 = 0.0;
     let is_white: bool = Color::is_white(piece.color);
 

@@ -28,7 +28,11 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
     let chess: Chess = setup.position().unwrap();
     let self_color: Color = setup.turn;
 
-    let best_move = board::minimax_root(3, chess, true);
+    let mut best_move = "".to_string();
+
+    if !chess.is_checkmate() {
+        best_move = board::minimax_root(3, chess, true);
+    }
     println!("{:?}", best_move);
 
     Ok(JsString::new(call.scope, &best_move).unwrap())
@@ -36,5 +40,11 @@ fn get_move(mut call: Call) -> JsResult<JsString> {
 
 register_module!(m, {
     m.export("getMove", get_move);
-    m.export("testEvaluateBoard", tests::test_evaluate_board)
+    m.export("testEvaluateBoard", tests::test_evaluate_board);
+    m.export("testGetPieceValueOfPawn", tests::test_get_piece_value_of_pawn);
+    m.export("testGetPieceValueOfKnight", tests::test_get_piece_value_of_knight);
+    m.export("testGetPieceValueOfBishop", tests::test_get_piece_value_of_bishop);
+    m.export("testGetPieceValueOfRook", tests::test_get_piece_value_of_rook);
+    m.export("testGetPieceValueOfQueen", tests::test_get_piece_value_of_queen);
+    m.export("testGetPieceValueOfKing", tests::test_get_piece_value_of_king)
 });
