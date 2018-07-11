@@ -4,7 +4,8 @@ use std::time::{Duration, SystemTime};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time;
-use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard, Color, Move };
+use shakmaty::{ Board, Piece, Square, Chess, MoveList, Position, Setup, Bitboard, Color, Move, fen };
+use shakmaty::fen::FenOpts;
 
 const PAWN_EVAL_WHITE: [[f64; 8]; 8] = [
     [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
@@ -237,16 +238,17 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> Stri
     let mut hc = vec![];
     let moves: MoveList = Position::legals(&chess);
     let best_move_value = Arc::new(Mutex::new(-9000.0));
-    let best_move =  Arc::new(Mutex::new(moves[0].clone()));;
+    let best_fen =  Arc::new(Mutex::new(chess.clone()));
 
     // Benchmark
     let start = SystemTime::now();
     for mov in moves {
         let best_move_value = Arc::clone(&best_move_value);
-        let best_move = Arc::clone(&best_move);
+        let best_fen = Arc::clone(&best_fen);
         let chess_copy: Chess = chess.clone();
         let h = thread::spawn(move || {
             let undo_chess: Chess = chess_copy.play(&mov).unwrap();
+            let cmp_value_chess = undo_chess.clone();
 
             let value = minimax(depth, undo_chess, -10000.0, 10000.0, is_maximising_player);
 
@@ -254,8 +256,8 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> Stri
             if value >= *best_move_value {
                 *best_move_value = value;
 
-                let mut best_move = best_move.lock().unwrap();
-                *best_move = mov;
+                let mut best_fen = best_fen.lock().unwrap();
+                *best_fen = cmp_value_chess.clone();
             }
         });
 
@@ -266,8 +268,8 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> Stri
         h.join().unwrap();
     }
 
-    let mut best_move = best_move.lock().unwrap();
-    let ret = format!("{}{}", (&*best_move).from().unwrap().to_string(), (&*best_move).to().to_string());
+    let mut best_move = best_fen.lock().unwrap();
+    let ret = format!("{}", fen::fen(&*best_move, &FenOpts::default()));
 
     println!("{}", *best_move_value.lock().unwrap());
 
@@ -276,6 +278,7 @@ pub fn minimax_root(depth: i8, chess: Chess, is_maximising_player: bool) -> Stri
     let difference = end.duration_since(start);
     println!("{:?}", difference);
 
+    //println!("{:?}", ret);
     return ret;
 }
 
